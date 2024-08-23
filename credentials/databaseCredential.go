@@ -1,4 +1,4 @@
-package database
+package creds
 
 type DBCredential struct {
 	DBType   string `binding:required`
