@@ -1,4 +1,4 @@
-module lukamijovic.com/role-mgmt-access-ctrl
+module github.com/LukaMijovic/role-mgmt-access-ctrl
 
 go 1.22.2
 

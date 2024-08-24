@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 
-	"lukamijovic.com/role-mgmt-access-ctrl/database"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/database"
 )
 
 func main() {

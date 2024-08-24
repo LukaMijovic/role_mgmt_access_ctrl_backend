@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 
+	creds "github.com/LukaMijovic/role-mgmt-access-ctrl/credentials"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 	_ "github.com/lib/pq"
-	creds "lukamijovic.com/role-mgmt-access-ctrl/credentials"
-	"lukamijovic.com/role-mgmt-access-ctrl/util"
 )
 
 var dataBase *sql.DB
