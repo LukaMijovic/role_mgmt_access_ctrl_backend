@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
+	creds "lukamijovic.com/role-mgmt-access-ctrl/credentials"
 	"lukamijovic.com/role-mgmt-access-ctrl/util"
 )
 
 var dataBase *sql.DB
 
 func ConnectToDatabase() error {
-	creds, err := util.ParseDatabaseCredentials("credentials/credentials.json")
+	creds, err := util.ParseDatabaseCredentials[creds.DBCredential]("credentials/credentials.json")
 
 	if err != nil {
 		fmt.Println(err)

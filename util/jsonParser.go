@@ -4,11 +4,9 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-
-	creds "lukamijovic.com/role-mgmt-access-ctrl/credentials"
 )
 
-func ParseDatabaseCredentials(path string) (*creds.DBCredential, error) {
+func ParseDatabaseCredentials[T any](path string) (*T, error) {
 
 	path, err := filepath.Abs(path)
 
@@ -22,7 +20,7 @@ func ParseDatabaseCredentials(path string) (*creds.DBCredential, error) {
 		return nil, err
 	}
 
-	var payload creds.DBCredential
+	var payload T
 
 	err = json.Unmarshal(content, &payload)
 
