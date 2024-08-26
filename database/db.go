@@ -12,7 +12,7 @@ import (
 var dataBase *sql.DB
 
 func ConnectToDatabase() error {
-	creds, err := util.ParseDatabaseCredentials[creds.DBCredential]("credentials/credentials.json")
+	creds, err := util.ParseJSONFile[creds.DBCredential]("credentials/credentials.json")
 
 	if err != nil {
 		fmt.Println(err)

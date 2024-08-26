@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func ParseDatabaseCredentials[T any](path string) (*T, error) {
+func ParseJSONFile[T interface{}](path string) (*T, error) {
 
 	path, err := filepath.Abs(path)
 
@@ -21,7 +21,6 @@ func ParseDatabaseCredentials[T any](path string) (*T, error) {
 	}
 
 	var payload T
-
 	err = json.Unmarshal(content, &payload)
 
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/routes"
 )
 
 func main() {
@@ -11,12 +12,7 @@ func main() {
 	defer database.DisconnectDatabase()
 
 	router := gin.Default()
+	routes.RegisterRoutes(router)
 
-	router.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
-
-	router.Run()
+	router.Run(":8080")
 }

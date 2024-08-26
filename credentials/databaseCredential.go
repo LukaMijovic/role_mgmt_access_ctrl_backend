@@ -8,8 +8,8 @@ type DBCredential struct {
 	SSLMode  string
 }
 
-func New(dbType string, user string, password string, dbName string, sslMode string) DBCredential {
-	return DBCredential{
+func NewDBCredential(dbType string, user string, password string, dbName string, sslMode string) *DBCredential {
+	return &DBCredential{
 		DBType:   dbType,
 		User:     user,
 		Password: password,
