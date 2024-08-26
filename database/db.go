@@ -11,6 +11,10 @@ import (
 
 var dataBase *sql.DB
 
+func GetDatabaseInstance() *sql.DB {
+	return dataBase
+}
+
 func ConnectToDatabase() error {
 	creds, err := util.ParseJSONFile[creds.DBCredential]("credentials/credentials.json")
 

@@ -1,7 +1,7 @@
 package repository
 
 type Repository interface {
-	Save()
+	Save() error
 	Read()
 	Update()
 	Delete()
