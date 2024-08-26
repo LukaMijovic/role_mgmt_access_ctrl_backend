@@ -1,6 +1,6 @@
 package dto
 
 type AdminCredentialsDTO struct {
-	email    string
-	password string
+	Email    string
+	Password string
 }
