@@ -7,5 +7,6 @@ func RegisterRoutes(server *gin.Engine) {
 	adminRoutes.POST("/login", LoginAdmin)
 
 	userRoutes := server.Group("/user")
+	userRoutes.POST("/create", CreateUser)
 	userRoutes.POST("/register", RegisterUser)
 }
