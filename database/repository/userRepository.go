@@ -71,12 +71,12 @@ func (ur *UserRepository) Save(u *model.User) (int64, error) {
 
 	defer stmt.Close()
 
-	var user_id int64
-	err = stmt.QueryRow(u.Firstname, u.Lastname, u.Email, u.Telephone, u.Birthdate, u.GetUserRegistrationDate()).Scan(&user_id)
+	var userID int64
+	err = stmt.QueryRow(u.Firstname, u.Lastname, u.Email, u.Telephone, u.Birthdate, u.GetUserRegistrationDate()).Scan(&userID)
 
 	if err != nil {
 		return -1, err
 	}
 
-	return user_id, nil
+	return userID, nil
 }

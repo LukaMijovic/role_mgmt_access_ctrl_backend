@@ -46,7 +46,7 @@ func CreateUser(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Printf(userDTO.Firstname + " " + userDTO.Lastname + " " + userDTO.Email + "\n")
+	//fmt.Printf(userDTO.Firstname + " " + userDTO.Lastname + " " + userDTO.Email + "\n")
 
 	user, err := services.SaveUserToDatabase(&userDTO)
 
@@ -57,7 +57,7 @@ func CreateUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
-		"userId":          user.GetID(),
+		"userID":          user.GetID(),
 		"registraionTime": user.GetUserRegistrationDate(),
 	})
 }
