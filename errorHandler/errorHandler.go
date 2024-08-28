@@ -17,3 +17,10 @@ func DatabaseError(ctx *gin.Context, statusCode int) {
 		"message":    "Error while saving object to database",
 	})
 }
+
+func AuthenticationError(ctx *gin.Context, statusCode int, message string) {
+	ctx.JSON(statusCode, gin.H{
+		"statusCode": statusCode,
+		"message":    message,
+	})
+}

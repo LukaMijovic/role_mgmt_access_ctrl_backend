@@ -1,11 +1,11 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/services"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +19,16 @@ func LoginAdmin(ctx *gin.Context) {
 		return
 	}
 
-	//Logika za servis logovanja admina
-	//...
-	fmt.Printf("User %v, logged in with creds: %v\n", credentials.Email, credentials.Password)
+	u, err := services.SignInAdmin(&credentials)
+
+	if err != nil {
+		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, err.Error())
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"user_id": u.User_ID,
+		"token":   "TOKEN",
+	})
 }
