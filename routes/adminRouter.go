@@ -14,7 +14,7 @@ func LoginAdmin(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&credentials)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest)
+		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
 		return
 	}

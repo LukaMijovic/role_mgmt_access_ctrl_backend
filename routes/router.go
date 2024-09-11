@@ -1,6 +1,9 @@
 package routes
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/middleware"
+	"github.com/gin-gonic/gin"
+)
 
 func RegisterRoutes(server *gin.Engine) {
 	adminRoutes := server.Group("/admin")
@@ -11,5 +14,5 @@ func RegisterRoutes(server *gin.Engine) {
 	userRoutes.POST("/register", RegisterUser)
 
 	deviceRoutes := server.Group("/device")
-	deviceRoutes.POST("/register", RegisterDevice)
+	deviceRoutes.POST("/register", RegisterDevice).Use(middleware.Authenticate)
 }

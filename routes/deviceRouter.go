@@ -15,14 +15,14 @@ func RegisterDevice(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&deviceDTO)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest)
+		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 	}
 
 	device, err := services.SaveDeviceToDatabase(&deviceDTO)
 
 	if err != nil {
 		fmt.Println(err.Error())
-		errorhandler.DatabaseError(ctx, http.StatusInternalServerError)
+		errorhandler.DatabaseError(ctx, http.StatusInternalServerError, "Error while saving object to database")
 
 		return
 	}
