@@ -1,3 +1,5 @@
 package creds
 
-type SecretKey string
+type SecretKey struct {
+	SecretKey string
+}

@@ -15,6 +15,9 @@ func GenerateToken(email string, userId int64) (string, error) {
 	if secretKey == nil {
 		key, err := ParseJSONFile[creds.SecretKey]("credentials/secretKey.json")
 
+		fmt.Printf("Token: %v\n", *key)
+		//fmt.Println(err.Error())
+
 		if err != nil {
 			return "", err
 		}
@@ -28,7 +31,7 @@ func GenerateToken(email string, userId int64) (string, error) {
 		"exp":    time.Now().Add(time.Hour * 24).Unix(),
 	})
 
-	return token.SignedString([]byte(*secretKey))
+	return token.SignedString([]byte(secretKey.SecretKey))
 }
 
 func VerifyToken(token string) (interface{}, error) {
@@ -49,10 +52,28 @@ func VerifyToken(token string) (interface{}, error) {
 			return nil, errors.New("Unexpected signing method")
 		}
 
-		return []byte(*secretKey), nil
+		return []byte(secretKey.SecretKey), nil
 	})
 
-	fmt.Printf("%s, %s\n", parsedToken, err.Error())
+	if err != nil {
+		return -1, errors.New("Could not parse token")
+	}
 
-	return nil, nil
+	if !parsedToken.Valid {
+		return -1, errors.New("Token is not valid")
+	}
+
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+
+	if !ok {
+		return -1, errors.New("Invalid token claims")
+	}
+
+	userId, ok := claims["userId"].(float64)
+
+	if !ok {
+		return -1, errors.New("Cannot get userId")
+	}
+
+	return int64(userId), nil
 }

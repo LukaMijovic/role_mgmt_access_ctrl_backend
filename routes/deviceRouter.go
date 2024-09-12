@@ -16,6 +16,8 @@ func RegisterDevice(ctx *gin.Context) {
 
 	if err != nil {
 		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+
+		return
 	}
 
 	device, err := services.SaveDeviceToDatabase(&deviceDTO)
@@ -30,6 +32,5 @@ func RegisterDevice(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"deviceID":         device.GetID(),
 		"registrationTime": device.GetDeviceRegistraionDate(),
-		"token":            "TOKEN",
 	})
 }

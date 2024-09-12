@@ -19,7 +19,7 @@ func DatabaseError(ctx *gin.Context, statusCode int, message string) {
 }
 
 func AuthenticationError(ctx *gin.Context, statusCode int, message string) {
-	ctx.JSON(statusCode, gin.H{
+	ctx.AbortWithStatusJSON(statusCode, gin.H{
 		"statusCode": statusCode,
 		"message":    message,
 	})

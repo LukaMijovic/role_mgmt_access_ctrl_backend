@@ -39,6 +39,23 @@ func (ur *UserRepository) GetUserIDFromDataBase(u *dto.UserCredentialsDTO) error
 	return nil
 }
 
+func (ur *UserRepository) GetUserCredentials(u *dto.UserCredentialsDTO) (*dto.UserCredentialsDTO, error) {
+	query := `SELECT email, password FROM public."User_credential" WHERE user_id = $1`
+	row := ur.db.QueryRow(query, u.User_ID)
+
+	var email string
+	var password string
+
+	err := row.Scan(&email, &password)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.UserCredentialsDTO{User_ID: u.User_ID, Email: email, Password: password}, nil
+
+}
+
 func (ur *UserRepository) SaveUserCredentials(u *dto.UserCredentialsDTO) error {
 	query := `INSERT INTO public."User_credential"(user_id, email, password) VALUES ($1, $2, $3) RETURNING user_id`
 

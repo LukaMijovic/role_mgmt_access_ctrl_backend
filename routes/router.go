@@ -12,7 +12,9 @@ func RegisterRoutes(server *gin.Engine) {
 	userRoutes := server.Group("/user")
 	userRoutes.POST("/create", CreateUser)
 	userRoutes.POST("/register", RegisterUser)
+	userRoutes.POST("/login", LoginUser)
 
 	deviceRoutes := server.Group("/device")
-	deviceRoutes.POST("/register", RegisterDevice).Use(middleware.Authenticate)
+	deviceRoutes.Use(middleware.Authenticate)
+	deviceRoutes.POST("/register", RegisterDevice)
 }
