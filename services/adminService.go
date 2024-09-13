@@ -5,6 +5,7 @@ import (
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database/repository"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 )
 
 func SignInAdmin(a *dto.AdminCredentialsDTO) (*dto.UserCredentialsDTO, error) {
@@ -28,7 +29,7 @@ func SignInAdmin(a *dto.AdminCredentialsDTO) (*dto.UserCredentialsDTO, error) {
 		return nil, err
 	}
 
-	if a.Email == creds.Email && a.Password == creds.Password {
+	if a.Email == creds.Email && util.CheckPassword(u.Password, creds.Password) {
 		return creds, nil
 	}
 
