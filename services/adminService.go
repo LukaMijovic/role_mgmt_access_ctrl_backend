@@ -8,6 +8,12 @@ import (
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 )
 
+func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO) error {
+	// send signal
+	// call addRole...
+	return nil
+}
+
 func SignInAdmin(a *dto.AdminCredentialsDTO) (*dto.UserCredentialsDTO, error) {
 	userRepository := repository.NewUserRepository()
 

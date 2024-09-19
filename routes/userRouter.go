@@ -54,6 +54,8 @@ func RegisterUser(ctx *gin.Context) {
 		return
 	}
 
+	services.ConfirmCreationByAdmin(&credentials)
+
 	err = services.RegisterUserToDatabase(&credentials)
 
 	if err != nil {

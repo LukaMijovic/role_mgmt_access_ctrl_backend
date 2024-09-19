@@ -2,7 +2,6 @@ package util
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	creds "github.com/LukaMijovic/role-mgmt-access-ctrl/credentials"
@@ -15,7 +14,7 @@ func GenerateToken(email string, userId int64) (string, error) {
 	if secretKey == nil {
 		key, err := ParseJSONFile[creds.SecretKey]("credentials/secretKey.json")
 
-		fmt.Printf("Token: %v\n", *key)
+		//fmt.Printf("Token: %v\n", *key)
 		//fmt.Println(err.Error())
 
 		if err != nil {
