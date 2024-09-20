@@ -81,7 +81,8 @@ func unlockRoom(ctx *gin.Context) {
 		return
 	}
 
-	ok, err = services.CheckDeviceIMEIofUser(tokenDTO.IMEI, int64(userId))
+	deviceId, ok, err := services.CheckDeviceIMEIofUser(tokenDTO.IMEI, int64(userId))
+	fmt.Printf("DeviceId: %v\n", deviceId)
 
 	if err != nil {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, err.Error())
@@ -95,9 +96,13 @@ func unlockRoom(ctx *gin.Context) {
 		return
 	}
 
+	//log event deviceId
+	logId, err := services.LogEvent(int64(userId), 110)
+
 	//Access right check
 
 	ctx.JSON(http.StatusOK, gin.H{
+		"eventId":    logId,
 		"IMEI":       tokenDTO.IMEI,
 		"message":    "OK to unlock the lock",
 		"lockId":     accessId,
