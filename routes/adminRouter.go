@@ -10,12 +10,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginAdmin(ctx *gin.Context) {
+func loginAdmin(ctx *gin.Context) {
 	var credentials dto.AdminCredentialsDTO
 	err := ctx.ShouldBindJSON(&credentials)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
 		return
 	}
@@ -23,7 +23,7 @@ func LoginAdmin(ctx *gin.Context) {
 	u, err := services.SignInAdmin(&credentials)
 
 	if err != nil {
-		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, err.Error())
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusUnauthorized, err.Error())
 
 		return
 	}
@@ -31,7 +31,7 @@ func LoginAdmin(ctx *gin.Context) {
 	token, err := util.GenerateToken(u.Email, u.User_ID)
 
 	if err != nil {
-		errorhandler.AuthenticationError(ctx, http.StatusInternalServerError, "Token could not be generated")
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusInternalServerError, "Token could not be generated")
 
 		return
 	}

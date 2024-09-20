@@ -7,14 +7,15 @@ import (
 
 func RegisterRoutes(server *gin.Engine) {
 	adminRoutes := server.Group("/admin")
-	adminRoutes.POST("/login", LoginAdmin)
+	adminRoutes.POST("/login", loginAdmin)
 
 	userRoutes := server.Group("/user")
-	userRoutes.POST("/create", CreateUser)
-	userRoutes.POST("/register", RegisterUser)
-	userRoutes.POST("/login", LoginUser)
+	userRoutes.POST("/create", createUser)
+	userRoutes.POST("/register", registerUser)
+	userRoutes.POST("/login", loginUser)
 
 	deviceRoutes := server.Group("/device")
 	deviceRoutes.Use(middleware.Authenticate)
-	deviceRoutes.POST("/register", RegisterDevice)
+	deviceRoutes.POST("/register", registerDevice)
+	deviceRoutes.POST("/unlock/:id", unlockRoom)
 }

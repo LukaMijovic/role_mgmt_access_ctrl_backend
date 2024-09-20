@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -13,10 +12,10 @@ import (
 func Authenticate(ctx *gin.Context) {
 	token := ctx.Request.Header.Get("Authorization")
 
-	fmt.Printf("Token received: %v\n", token)
+	//fmt.Printf("Token received: %v\n", token)
 
 	if token == "" {
-		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, "Authorization header empty.")
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusUnauthorized, "Authorization header empty.")
 
 		return
 	}
@@ -24,7 +23,7 @@ func Authenticate(ctx *gin.Context) {
 	token, ok := strings.CutPrefix(token, "Bearer ")
 
 	if !ok {
-		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, "Invalid token received")
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusUnauthorized, "Invalid token received")
 
 		return
 	}
@@ -32,11 +31,11 @@ func Authenticate(ctx *gin.Context) {
 	userId, err := util.VerifyToken(token)
 
 	if err != nil {
-		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, err.Error())
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusUnauthorized, err.Error())
 
 		return
 	}
 
-	ctx.Set("userID", userId)
+	ctx.Set("userId", userId)
 	ctx.Next()
 }

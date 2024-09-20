@@ -12,12 +12,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginUser(ctx *gin.Context) {
+func loginUser(ctx *gin.Context) {
 	var credentials dto.UserCredentialsDTO
 	err := ctx.ShouldBindJSON(&credentials)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
 		return
 	}
@@ -25,7 +25,7 @@ func LoginUser(ctx *gin.Context) {
 	u, err := services.SignInUser(&credentials)
 
 	if err != nil {
-		errorhandler.AuthenticationError(ctx, http.StatusUnauthorized, err.Error())
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusUnauthorized, err.Error())
 
 		return
 	}
@@ -33,7 +33,7 @@ func LoginUser(ctx *gin.Context) {
 	token, err := util.GenerateToken(u.Email, u.User_ID)
 
 	if err != nil {
-		errorhandler.AuthenticationError(ctx, http.StatusInternalServerError, "Token could not be generated")
+		errorhandler.AuthenticationError(ctx.AbortWithStatusJSON, http.StatusInternalServerError, "Token could not be generated")
 
 		return
 	}
@@ -44,12 +44,12 @@ func LoginUser(ctx *gin.Context) {
 	})
 }
 
-func RegisterUser(ctx *gin.Context) {
+func registerUser(ctx *gin.Context) {
 	var credentials dto.UserCredentialsDTO
 	err := ctx.ShouldBindJSON(&credentials)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
 		return
 	}
@@ -60,7 +60,7 @@ func RegisterUser(ctx *gin.Context) {
 
 	if err != nil {
 		fmt.Println(err.Error())
-		errorhandler.DatabaseError(ctx, http.StatusInternalServerError, "Error while saving object to database")
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while saving object to database")
 
 		return
 	}
@@ -71,12 +71,12 @@ func RegisterUser(ctx *gin.Context) {
 	})
 }
 
-func CreateUser(ctx *gin.Context) {
+func createUser(ctx *gin.Context) {
 	var userDTO model.User
 	err := ctx.ShouldBindJSON(&userDTO)
 
 	if err != nil {
-		errorhandler.BadBodyRequestError(ctx, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
 		return
 	}
@@ -86,7 +86,7 @@ func CreateUser(ctx *gin.Context) {
 	user, err := services.SaveUserToDatabase(&userDTO)
 
 	if err != nil {
-		errorhandler.DatabaseError(ctx, http.StatusInternalServerError, "Error while saving object to database")
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while saving object to database")
 
 		return
 	}
