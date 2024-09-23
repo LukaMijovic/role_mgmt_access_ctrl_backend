@@ -52,6 +52,20 @@ func (dr *DeviceRepository) GetDeviceIdFromIMEI(IMEI string) (int64, error) {
 	return deviceId, nil
 }
 
+func (dr *DeviceRepository) GetDeviceIdFromUser(userId int64) (int64, error) {
+	query := `SELECT device_id FROM public."Device" WHERE user_id = $1`
+	row := dr.db.QueryRow(query, userId)
+
+	var deviceId int64
+	err := row.Scan(&deviceId)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return deviceId, nil
+}
+
 func (dr *DeviceRepository) GetDeviceIMEIOfUser(userId int64) ([]string, error) {
 	query := `SELECT "IMEI" FROM public."Device" WHERE user_id = $1`
 	rows, err := dr.db.Query(query, userId)

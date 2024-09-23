@@ -18,4 +18,8 @@ func RegisterRoutes(server *gin.Engine) {
 	deviceRoutes.Use(middleware.Authenticate)
 	deviceRoutes.POST("/register", registerDevice)
 	deviceRoutes.POST("/unlock/:id", unlockRoom)
+
+	accessRoutes := server.Group("/access")
+	accessRoutes.Use(middleware.Authenticate)
+	accessRoutes.POST("/temp/user/:id", receiveTempAccess)
 }
