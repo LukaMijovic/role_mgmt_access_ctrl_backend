@@ -77,6 +77,20 @@ func (ur *UserRepository) SaveUserCredentials(u *dto.UserCredentialsDTO) error {
 	return nil
 }
 
+func (ur *UserRepository) GetRoleIdOfUser(userId int64) (int64, error) {
+	query := `SELECT role_id FROM public."User" WHERE user_id = $1`
+	row := ur.db.QueryRow(query, userId)
+
+	var roleId int64
+	err := row.Scan(&roleId)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return roleId, nil
+}
+
 func (ur *UserRepository) Save(u *model.User) (int64, error) {
 	query := `INSERT INTO public."User"(firstname, lastname, email, telephone, birthdate, user_registration_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING user_id`
 

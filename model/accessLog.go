@@ -7,8 +7,26 @@ type AccessLog struct {
 	action     string
 	accessDate time.Time
 	unlockDate time.Time
-	userID     int64
-	deviceID   int64
+	userId     int64
+	deviceId   int64
+}
+
+func NewAccessLog(action string, userId int64, deviceId int64) *AccessLog {
+	return &AccessLog{
+		action:     action,
+		accessDate: time.Now(),
+		userId:     userId,
+		deviceId:   deviceId,
+	}
+}
+
+func (al *AccessLog) NewUnlockLog(action string, userId int64, deviceId int64) *AccessLog {
+	return &AccessLog{
+		action:     action,
+		unlockDate: time.Now(),
+		userId:     userId,
+		deviceId:   deviceId,
+	}
 }
 
 func (a *AccessLog) GetID() int64 {
@@ -28,9 +46,9 @@ func (a *AccessLog) GetUnlockDate() time.Time {
 }
 
 func (a *AccessLog) GetUserID() int64 {
-	return a.userID
+	return a.userId
 }
 
 func (a *AccessLog) GetDeviceID() int64 {
-	return a.deviceID
+	return a.deviceId
 }
