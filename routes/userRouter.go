@@ -54,6 +54,7 @@ func registerUser(ctx *gin.Context) {
 		return
 	}
 
+	//Admin signal for approval
 	services.ConfirmCreationByAdmin(&credentials)
 
 	err = services.RegisterUserToDatabase(&credentials)

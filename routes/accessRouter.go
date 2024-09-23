@@ -32,6 +32,7 @@ func receiveTempAccess(ctx *gin.Context) {
 	tempAccess.SetAccessId(accessId)
 
 	//Admin signal for approval
+	services.ConfirmTempRightByAdmin(&tempAccess)
 
 	err = services.GiveTempAccessRightToUser(&tempAccess)
 

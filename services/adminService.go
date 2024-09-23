@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database/repository"
+	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 )
@@ -11,6 +12,11 @@ import (
 func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO) error {
 	// send signal
 	// call addRole...
+	return nil
+}
+
+func ConfirmTempRightByAdmin(tr *model.TempAccessRight) error {
+	//send signal
 	return nil
 }
 
