@@ -40,7 +40,6 @@ func registerDevice(ctx *gin.Context) {
 
 func unlockRoom(ctx *gin.Context) {
 	accessId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
-	fmt.Printf("Room id: %v\n", accessId)
 
 	if err != nil {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "Invalid url. Could not parse.")
@@ -82,7 +81,7 @@ func unlockRoom(ctx *gin.Context) {
 	}
 
 	deviceId, ok, err := services.CheckDeviceIMEIofUser(tokenDTO.IMEI, int64(userId))
-	fmt.Printf("DeviceId: %v\n", deviceId)
+	//fmt.Printf("DeviceId: %v\n", deviceId)
 
 	if err != nil {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, err.Error())
@@ -97,9 +96,37 @@ func unlockRoom(ctx *gin.Context) {
 	}
 
 	//log event deviceId
-	logId, err := services.LogEvent(int64(userId), 110)
+	logId, err := services.LogEvent(int64(userId), int64(deviceId), "access")
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not save access log.")
+
+		return
+	}
 
 	//Access right check
+	ok, err = services.CheckAccessRightOfUser(int64(userId), accessId)
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not get access rights from database.")
+
+		return
+	}
+
+	if !ok {
+		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "User does not have needed rights to unlock the room.")
+
+		return
+	}
+
+	unlockTime := time.Now()
+	err = services.UpdateUnlockTime(logId, unlockTime)
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not update the unlock time")
+
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"eventId":    logId,
@@ -107,6 +134,6 @@ func unlockRoom(ctx *gin.Context) {
 		"message":    "OK to unlock the lock",
 		"lockId":     accessId,
 		"userId":     userId,
-		"unlockTime": time.Now(),
+		"unlockTime": unlockTime,
 	})
 }

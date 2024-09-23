@@ -38,6 +38,20 @@ func (dr *DeviceRepository) Save(d *model.Device) (int64, error) {
 	return deviceID, nil
 }
 
+func (dr *DeviceRepository) GetDeviceIdFromIMEI(IMEI string) (int64, error) {
+	query := `SELECT device_id FROM public."Device" WHERE "IMEI" = $1`
+	row := dr.db.QueryRow(query, IMEI)
+
+	var deviceId int64
+	err := row.Scan(&deviceId)
+
+	if err != nil {
+		return -1, err
+	}
+
+	return deviceId, nil
+}
+
 func (dr *DeviceRepository) GetDeviceIMEIOfUser(userId int64) ([]string, error) {
 	query := `SELECT "IMEI" FROM public."Device" WHERE user_id = $1`
 	rows, err := dr.db.Query(query, userId)

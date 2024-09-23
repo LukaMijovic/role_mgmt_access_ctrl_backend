@@ -20,12 +20,24 @@ func CheckDeviceIMEIofUser(IMEI string, userId int64) (int64, bool, error) {
 	}
 
 	if len(IMEIList) == 1 {
-		return 1, IMEIList[0] == IMEI, nil
+		deviceId, err := deviceRepository.GetDeviceIdFromIMEI(IMEI)
+
+		if err != nil {
+			return -1, IMEIList[0] == IMEI, err
+		}
+
+		return deviceId, IMEIList[0] == IMEI, nil
 	}
 
 	for i := 0; i < len(IMEIList); i++ {
 		if IMEIList[i] == IMEI {
-			return 1, true, nil
+			deviceId, err := deviceRepository.GetDeviceIdFromIMEI(IMEI)
+
+			if err != nil {
+				return -1, true, err
+			}
+
+			return deviceId, true, nil
 		}
 	}
 
