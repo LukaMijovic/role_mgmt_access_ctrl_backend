@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database/repository"
@@ -36,7 +37,7 @@ func LogRequest(userId int64, event string) (int64, error) {
 	return logId, nil
 }
 
-func UpdateUnlockTime(logId int64, unlockTime time.Time) error {
+func UpdateUnlockTime(logId int64, unlockTime time.Time, accessId int64) error {
 	accessLogRepository := repository.NewAccessLogRepository()
-	return accessLogRepository.SaveUnlockTime(logId, unlockTime)
+	return accessLogRepository.SaveUnlockTime(logId, unlockTime, fmt.Sprint(accessId))
 }

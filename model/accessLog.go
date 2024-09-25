@@ -20,7 +20,7 @@ func NewAccessLog(action string, userId int64, deviceId int64) *AccessLog {
 	}
 }
 
-func (al *AccessLog) NewUnlockLog(action string, userId int64, deviceId int64) *AccessLog {
+func (al *AccessLog) NewEventLog(action string, userId int64, deviceId int64) *AccessLog {
 	return &AccessLog{
 		action:     action,
 		unlockDate: time.Now(),

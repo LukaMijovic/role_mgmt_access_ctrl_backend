@@ -18,8 +18,8 @@ func NewAccessLogRepository() *AccessLogRepository {
 	}
 }
 
-func (alr *AccessLogRepository) SaveUnlockTime(logId int64, unlockTime time.Time) error {
-	query := `UPDATE public."Access_log" SET unlock_date = $1, action = 'unlock' WHERE log_id = $2`
+func (alr *AccessLogRepository) SaveUnlockTime(logId int64, unlockTime time.Time, accessId string) error {
+	query := `UPDATE public."Access_log" SET unlock_date = $1, action = 'unlock  ` + accessId + `' WHERE log_id = $2`
 	stmt, err := alr.db.Prepare(query)
 
 	if err != nil {
