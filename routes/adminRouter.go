@@ -36,6 +36,14 @@ func loginAdmin(ctx *gin.Context) {
 		return
 	}
 
+	_, err = services.LogRequest(u.User_ID, "admin login")
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not save access log.")
+
+		return
+	}
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"user_id": u.User_ID,
 		"token":   token,
