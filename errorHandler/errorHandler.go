@@ -31,3 +31,10 @@ func AuthenticationError(action func(int, interface{}), statusCode int, message 
 		"message":    message,
 	})
 }
+
+func WebSocketConnectionError(action func(int, interface{}), statusCode int, message string) {
+	action(statusCode, gin.H{
+		"statusCode": statusCode,
+		"message":    message,
+	})
+}

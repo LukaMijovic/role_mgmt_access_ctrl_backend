@@ -8,6 +8,7 @@ import (
 func RegisterRoutes(server *gin.Engine) {
 	adminRoutes := server.Group("/admin")
 	adminRoutes.POST("/login", loginAdmin)
+	adminRoutes.GET("/connect", connectToWS)
 
 	userRoutes := server.Group("/user")
 	userRoutes.POST("/create", createUser)
