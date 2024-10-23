@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
+	"strconv"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -45,8 +45,19 @@ func loginUser(ctx *gin.Context) {
 }
 
 func registerUser(ctx *gin.Context) {
-	var credentials dto.UserCredentialsDTO
-	err := ctx.ShouldBindJSON(&credentials)
+	// var credentials dto.UserCredentialsDTO
+	// err := ctx.ShouldBindJSON(&credentials)
+
+	// if err != nil {
+	// 	errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+
+	// 	return
+	// }
+	userId := ctx.Query("user_id")
+	email := ctx.Query("email")
+	password := ctx.Query("password")
+
+	userIdParsed, err := strconv.ParseInt(userId, 10, 64)
 
 	if err != nil {
 		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
@@ -54,21 +65,33 @@ func registerUser(ctx *gin.Context) {
 		return
 	}
 
-	//Admin signal for approval
-	services.ConfirmCreationByAdmin(&credentials)
-
-	err = services.RegisterUserToDatabase(&credentials)
-
-	if err != nil {
-		fmt.Println(err.Error())
-		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while saving object to database")
-
-		return
+	credentials := dto.UserCredentialsDTO{
+		User_ID:  userIdParsed,
+		Email:    email,
+		Password: password,
 	}
+
+	//Admin signal for approval
+	go services.ConfirmCreationByAdmin(&credentials, ctx)
+
+	// err = services.RegisterUserToDatabase(&credentials)
+
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while saving object to database")
+
+	// 	return
+	// }
+
+	// ctx.JSON(http.StatusOK, gin.H{
+	// 	"user_id": credentials.User_ID,
+	// 	"email":   credentials.Email,
+	// })
 
 	ctx.JSON(http.StatusOK, gin.H{
 		"user_id": credentials.User_ID,
 		"email":   credentials.Email,
+		"message": "Registration request has been sent.",
 	})
 }
 

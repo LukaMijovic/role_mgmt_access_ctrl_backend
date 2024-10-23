@@ -2,7 +2,6 @@ package routes
 
 import (
 	"net/http"
-	"time"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
@@ -14,26 +13,31 @@ import (
 
 func connectToWS(ctx *gin.Context) {
 	wsHandler := &util.WebSocketHandler{
-		websocket.Upgrader{
+		Upgrader: &websocket.Upgrader{
 			ReadBufferSize:  1024,
 			WriteBufferSize: 1024,
 		},
 	}
 
-	conn, err := wsHandler.Upgrader.Upgrade(ctx.Writer, ctx.Request, nil)
+	conn, err := wsHandler.Connect(ctx)
 
 	if err != nil {
-		//fmt.Printf("Error while upgrading from HTTP to WS: %v", err.Error())
 		errorhandler.WebSocketConnectionError(ctx.JSON, http.StatusNotAcceptable, "Error while establishing Web Socket connection to the server.")
+
+		return
 	}
 
-	defer conn.Close()
+	util.WebAppConnection = conn
 
 	//Channel communication with Frontend Web application
-	for {
-		conn.WriteMessage(websocket.TextMessage, []byte("hello, WebSocket!"))
-		time.Sleep(time.Second * time.Duration(5))
-	}
+
+	// for i := 0; i <= 10; i++ {
+	// 	msg := "hello, WebSocket! " + fmt.Sprint(uint8(i))
+	// 	conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	// 	time.Sleep(time.Second)
+	// }
+
+	//defer wsHandler.Disconnect(conn)
 }
 
 func loginAdmin(ctx *gin.Context) {

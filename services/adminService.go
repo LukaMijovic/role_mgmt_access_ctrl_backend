@@ -2,16 +2,72 @@ package services
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database/repository"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
-func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO) error {
+func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
+	fmt.Println("Entered Goroutine!")
+
+	wsh := &util.WebSocketHandler{
+		Upgrader: &websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+		},
+	}
+
+	conn, err := wsh.Connect(ctx)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
+	defer wsh.Disconnect(conn)
+
 	// send signal
-	// call addRole...
+
+	msg := fmt.Sprintf("%v", uint8(u.User_ID))
+	err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte(msg))
+	//util.WebAppConnection.WriteJSON(u)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
+	var res dto.UserRoleDTO
+	err = util.WebAppConnection.ReadJSON(&res)
+	//mt, data, err := util.WebAppConnection.ReadMessage()
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
+	//fmt.Printf("MT: %v, msg: %s\n", mt == websocket.BinaryMessage, string(data))
+	fmt.Printf("User %v got role: %v\n", res.User_id, res.Role_id)
+
+	//msg = fmt.Sprintf("User %v has been created with role %v.", uint8(res.User_id), uint8(res.Role_id))
+	//conn.WriteMessage(websocket.TextMessage, []byte(data))
+
+	err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte("Successful"))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
 	return nil
 }
 
