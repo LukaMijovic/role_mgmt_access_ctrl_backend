@@ -12,7 +12,7 @@ func RegisterRoutes(server *gin.Engine) {
 
 	userRoutes := server.Group("/user")
 	userRoutes.POST("/create", createUser)
-	userRoutes.GET("/register", registerUser)
+	userRoutes.POST("/register", registerUser)
 	userRoutes.POST("/login", loginUser)
 	userRoutes.GET("/connect", connectUserToWS)
 

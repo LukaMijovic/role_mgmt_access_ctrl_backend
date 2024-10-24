@@ -63,6 +63,8 @@ func unlockRoom(ctx *gin.Context) {
 		return
 	}
 
+	//fmt.Printf("AccessRouter:\n accessId: %v\n", accessId)
+
 	var tokenDTO dto.UserAccessDTO
 	err = ctx.ShouldBindJSON(&tokenDTO)
 
@@ -73,7 +75,7 @@ func unlockRoom(ctx *gin.Context) {
 	}
 
 	id, ok := ctx.Get("userId")
-	// fmt.Printf("UserId of logged in user: %v\n", id)
+	//fmt.Printf("UserId of logged in user from cookie: %v\n", id)
 
 	if !ok {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusInternalServerError, "Something went wrong.")
@@ -82,13 +84,14 @@ func unlockRoom(ctx *gin.Context) {
 	}
 
 	userId, ok := id.(int64)
-	//fmt.Printf("UserId of logged in user: %v\n", userId)
 
 	if !ok {
 		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Invalid userId provided.")
 
 		return
 	}
+
+	//fmt.Printf("UserId of logged in user parsed: %v\n", userId)
 
 	if int64(userId) != tokenDTO.UserId {
 		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Invalid userId.")
@@ -97,7 +100,6 @@ func unlockRoom(ctx *gin.Context) {
 	}
 
 	deviceId, ok, err := services.CheckDeviceIMEIofUser(tokenDTO.IMEI, int64(userId))
-	//fmt.Printf("DeviceId: %v\n", deviceId)
 
 	if err != nil {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, err.Error())
@@ -111,8 +113,11 @@ func unlockRoom(ctx *gin.Context) {
 		return
 	}
 
+	//fmt.Printf("AccessRouter:\n DeviceId: %v\n", deviceId)
+
 	//log event deviceId
-	logId, err := services.LogEvent(int64(userId), int64(deviceId), "access "+string(accessId))
+	accessIdParsed := fmt.Sprint(accessId)
+	logId, err := services.LogEvent(int64(userId), int64(deviceId), "access "+accessIdParsed)
 
 	if err != nil {
 		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not save access log.")
@@ -131,6 +136,7 @@ func unlockRoom(ctx *gin.Context) {
 
 	if !ok {
 		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "User does not have needed rights to unlock the room.")
+		//fmt.Printf("AccessRouter:\n UserId: %v, AccessId: %v, IMEI: %v\n", userId, accessId, tokenDTO.IMEI)
 
 		return
 	}

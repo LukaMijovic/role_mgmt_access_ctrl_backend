@@ -2,7 +2,6 @@ package routes
 
 import (
 	"net/http"
-	"strconv"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -65,19 +64,19 @@ func connectUserToWS(ctx *gin.Context) {
 }
 
 func registerUser(ctx *gin.Context) {
-	// var credentials dto.UserCredentialsDTO
-	// err := ctx.ShouldBindJSON(&credentials)
+	var credentials dto.UserCredentialsDTO
+	err := ctx.ShouldBindJSON(&credentials)
 
-	// if err != nil {
-	// 	errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+	if err != nil {
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
-	// 	return
-	// }
-	userId := ctx.Query("user_id")
-	email := ctx.Query("email")
-	password := ctx.Query("password")
+		return
+	}
+	// userId := ctx.Query("user_id")
+	// email := ctx.Query("email")
+	// password := ctx.Query("password")
 
-	userIdParsed, err := strconv.ParseInt(userId, 10, 64)
+	// userIdParsed, err := strconv.ParseInt(userId, 10, 64)
 
 	if err != nil {
 		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
@@ -85,11 +84,11 @@ func registerUser(ctx *gin.Context) {
 		return
 	}
 
-	credentials := dto.UserCredentialsDTO{
-		User_ID:  userIdParsed,
-		Email:    email,
-		Password: password,
-	}
+	// credentials := dto.UserCredentialsDTO{
+	// 	User_ID:  userIdParsed,
+	// 	Email:    email,
+	// 	Password: password,
+	// }
 
 	//Admin signal for approval
 	go services.ConfirmCreationByAdmin(&credentials, ctx)

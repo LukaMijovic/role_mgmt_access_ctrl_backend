@@ -15,31 +15,31 @@ import (
 func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 	fmt.Println("Entered Goroutine!")
 
-	wsh := &util.WebSocketHandler{
-		Upgrader: &websocket.Upgrader{
-			ReadBufferSize:  1024,
-			WriteBufferSize: 1024,
-		},
-	}
+	// wsh := &util.WebSocketHandler{
+	// 	Upgrader: &websocket.Upgrader{
+	// 		ReadBufferSize:  1024,
+	// 		WriteBufferSize: 1024,
+	// 	},
+	// }
 
-	conn, err := wsh.Connect(ctx)
+	//conn, err := wsh.Connect(ctx)
 
-	if err != nil {
-		fmt.Printf("Error: %v\n", err.Error())
+	// if err != nil {
+	// 	fmt.Printf("Error: %v\n", err.Error())
 
-		return err
-	}
+	// 	return err
+	// }
 
-	defer wsh.Disconnect(conn)
+	//defer wsh.Disconnect(conn)
 
 	// send signal
 
 	//msg := fmt.Sprintf("%v", uint8(u.User_ID))
 	//err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte(msg))
-	err = util.WebAppConnection.WriteJSON(&u)
+	err := util.WebAppConnection.WriteJSON(&u)
 
 	if err != nil {
-		fmt.Printf("Error: %v\n", err.Error())
+		//fmt.Printf("Error: %v\n", err.Error())
 
 		return err
 	}
@@ -49,16 +49,27 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 	//mt, data, err := util.WebAppConnection.ReadMessage()
 
 	if err != nil {
-		fmt.Printf("Error: %v\n", err.Error())
+		//fmt.Printf("Error: %v\n", err.Error())
 
 		return err
 	}
+
+	//fmt.Printf("User_id: %v, role_id: %v\n", res.User_id, res.Role_id)
 
 	ur := repository.NewUserRepository()
 	err = ur.SetRoleIdOfUser(res.User_id, res.Role_id)
 
 	if err != nil {
-		fmt.Printf("Error: %v\n", err.Error())
+		//fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
+	//err = ur.SaveUserCredentials(u)
+	err = RegisterUserToDatabase(u)
+
+	if err != nil {
+		//fmt.Printf("Error: %v\n", err.Error())
 
 		return err
 	}
@@ -69,10 +80,18 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 	//msg = fmt.Sprintf("User %v has been created with role %v.", uint8(res.User_id), uint8(res.Role_id))
 	//conn.WriteMessage(websocket.TextMessage, []byte(data))
 
+	err = util.MobileAppConnection.WriteJSON(&u)
+
+	if err != nil {
+		//fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
 	err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte("Successful"))
 
 	if err != nil {
-		fmt.Printf("Error: %v\n", err.Error())
+		//fmt.Printf("Error: %v\n", err.Error())
 
 		return err
 	}
