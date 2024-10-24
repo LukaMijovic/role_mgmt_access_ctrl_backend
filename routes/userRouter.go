@@ -10,6 +10,7 @@ import (
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/services"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
 
 func loginUser(ctx *gin.Context) {
@@ -42,6 +43,25 @@ func loginUser(ctx *gin.Context) {
 		"user_id": u.User_ID,
 		"token":   token,
 	})
+}
+
+func connectUserToWS(ctx *gin.Context) {
+	wsHandler := &util.WebSocketHandler{
+		Upgrader: &websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+		},
+	}
+
+	conn, err := wsHandler.Connect(ctx)
+
+	if err != nil {
+		errorhandler.WebSocketConnectionError(ctx.JSON, http.StatusNotAcceptable, "Error while establishing Web Socket connection to the server.")
+
+		return
+	}
+
+	util.MobileAppConnection = conn
 }
 
 func registerUser(ctx *gin.Context) {

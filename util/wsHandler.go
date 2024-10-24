@@ -10,6 +10,7 @@ type WebSocketHandler struct {
 }
 
 var WebAppConnection *websocket.Conn
+var MobileAppConnection *websocket.Conn
 
 func (wsh *WebSocketHandler) Connect(ctx *gin.Context) (*websocket.Conn, error) {
 

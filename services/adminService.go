@@ -34,9 +34,9 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 
 	// send signal
 
-	msg := fmt.Sprintf("%v", uint8(u.User_ID))
-	err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte(msg))
-	//util.WebAppConnection.WriteJSON(u)
+	//msg := fmt.Sprintf("%v", uint8(u.User_ID))
+	//err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte(msg))
+	err = util.WebAppConnection.WriteJSON(&u)
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err.Error())
@@ -54,8 +54,17 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 		return err
 	}
 
+	ur := repository.NewUserRepository()
+	err = ur.SetRoleIdOfUser(res.User_id, res.Role_id)
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err.Error())
+
+		return err
+	}
+
 	//fmt.Printf("MT: %v, msg: %s\n", mt == websocket.BinaryMessage, string(data))
-	fmt.Printf("User %v got role: %v\n", res.User_id, res.Role_id)
+	//fmt.Printf("User %v got role: %v\n", res.User_id, res.Role_id)
 
 	//msg = fmt.Sprintf("User %v has been created with role %v.", uint8(res.User_id), uint8(res.Role_id))
 	//conn.WriteMessage(websocket.TextMessage, []byte(data))

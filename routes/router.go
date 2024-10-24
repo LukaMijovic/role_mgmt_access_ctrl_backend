@@ -14,6 +14,7 @@ func RegisterRoutes(server *gin.Engine) {
 	userRoutes.POST("/create", createUser)
 	userRoutes.GET("/register", registerUser)
 	userRoutes.POST("/login", loginUser)
+	userRoutes.GET("/connect", connectUserToWS)
 
 	deviceRoutes := server.Group("/device")
 	deviceRoutes.Use(middleware.Authenticate)
