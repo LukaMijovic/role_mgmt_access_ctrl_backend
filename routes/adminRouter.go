@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
@@ -22,6 +23,7 @@ func connectToWS(ctx *gin.Context) {
 	conn, err := wsHandler.Connect(ctx)
 
 	if err != nil {
+		fmt.Println(err.Error())
 		errorhandler.WebSocketConnectionError(ctx.JSON, http.StatusNotAcceptable, "Error while establishing Web Socket connection to the server.")
 
 		return

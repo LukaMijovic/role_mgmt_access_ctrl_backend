@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"strconv"
+	"time"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -125,4 +126,28 @@ func (ur *UserRepository) Save(u *model.User) (int64, error) {
 	}
 
 	return userID, nil
+}
+
+func (ur *UserRepository) Read(userId int64) (*model.User, error) {
+	query := `SELECT firstname, lastname, email, telephone, birthdate FROM public."User" WHERE user_id = $1`
+	row := ur.db.QueryRow(query, userId)
+
+	var firstname, lastname, email, telephone string
+	var birthdate time.Time
+
+	err := row.Scan(&firstname, &lastname, &email, &telephone, &birthdate)
+
+	user := model.User{
+		Firstname: firstname,
+		Lastname:  lastname,
+		Email:     email,
+		Telephone: telephone,
+		Birthdate: birthdate,
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }

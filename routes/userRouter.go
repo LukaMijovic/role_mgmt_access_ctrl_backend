@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -55,6 +57,7 @@ func connectUserToWS(ctx *gin.Context) {
 	conn, err := wsHandler.Connect(ctx)
 
 	if err != nil {
+		//fmt.Println(err.Error())
 		errorhandler.WebSocketConnectionError(ctx.JSON, http.StatusNotAcceptable, "Error while establishing Web Socket connection to the server.")
 
 		return
@@ -138,4 +141,25 @@ func createUser(ctx *gin.Context) {
 		"userID":          user.GetID(),
 		"registraionTime": user.GetUserRegistrationDate(),
 	})
+}
+
+func getUser(ctx *gin.Context) {
+	userId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	if err != nil {
+		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "Invalid url. Could not parse.")
+
+		return
+	}
+
+	user, err := services.GetUserFromDataBase(userId)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not get user from database.")
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, user)
 }

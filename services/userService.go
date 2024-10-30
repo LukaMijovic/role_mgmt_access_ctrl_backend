@@ -70,3 +70,15 @@ func SaveUserToDatabase(u *model.User) (*model.User, error) {
 
 	return u, nil
 }
+
+func GetUserFromDataBase(userId int64) (*model.User, error) {
+	userRepository := repository.NewUserRepository()
+
+	user, err := userRepository.Read(userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

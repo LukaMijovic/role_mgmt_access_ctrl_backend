@@ -36,7 +36,7 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 
 	//msg := fmt.Sprintf("%v", uint8(u.User_ID))
 	//err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte(msg))
-	err := util.WebAppConnection.WriteJSON(&u)
+	err := util.WebAppConnection.WriteJSON(&dto.UserCredentialConfirmationDTO{Email: u.Email, UserId: u.User_ID})
 
 	if err != nil {
 		//fmt.Printf("Error: %v\n", err.Error())
