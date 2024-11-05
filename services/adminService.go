@@ -112,7 +112,7 @@ func SignInAdmin(a *dto.AdminCredentialsDTO) (*dto.UserCredentialsDTO, error) {
 		Password: a.Password,
 	}
 
-	err := userRepository.GetUserIDFromDataBase(&u)
+	_, err := userRepository.GetUserIDFromDataBase(&u)
 
 	if err != nil {
 		return nil, err

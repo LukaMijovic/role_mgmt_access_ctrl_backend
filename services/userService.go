@@ -12,7 +12,7 @@ import (
 func SignInUser(u *dto.UserCredentialsDTO) (*dto.UserCredentialsDTO, error) {
 	userRepository := repository.NewUserRepository()
 
-	err := userRepository.GetUserIDFromDataBase(u)
+	_, err := userRepository.GetUserIDFromDataBase(u)
 
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func SignInUser(u *dto.UserCredentialsDTO) (*dto.UserCredentialsDTO, error) {
 func RegisterUserToDatabase(u *dto.UserCredentialsDTO) error {
 	userRepository := repository.NewUserRepository()
 
-	err := userRepository.GetUserIDFromDataBase(u)
+	_, err := userRepository.GetUserIDFromDataBase(u)
 
 	if err != nil {
 		return err
@@ -73,7 +73,6 @@ func SaveUserToDatabase(u *model.User) (*model.User, error) {
 
 func GetUserFromDataBase(userId int64) (*model.User, error) {
 	userRepository := repository.NewUserRepository()
-
 	user, err := userRepository.Read(userId)
 
 	if err != nil {
@@ -81,4 +80,27 @@ func GetUserFromDataBase(userId int64) (*model.User, error) {
 	}
 
 	return user, nil
+}
+
+func GetAllUsersFromDataBase() (*[]model.User, error) {
+	userRepository := repository.NewUserRepository()
+	users, err := userRepository.ReadAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func CheckDoesRegistrationExists(userCrednetials *dto.UserCredentialsDTO) (bool, error) {
+	userRepository := repository.NewUserRepository()
+	//fmt.Println(userCrednetials.Email)
+	ok, err := userRepository.GetUserIDFromDataBase(userCrednetials)
+
+	if err != nil {
+		return false, err
+	}
+
+	return ok, nil
 }

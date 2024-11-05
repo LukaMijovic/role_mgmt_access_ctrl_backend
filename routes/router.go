@@ -11,6 +11,7 @@ func RegisterRoutes(server *gin.Engine) {
 	adminRoutes.GET("/connect", connectToWS)
 	adminRoutes.Use(middleware.Authenticate)
 	adminRoutes.GET("/user/:id", getUser)
+	adminRoutes.GET("/user/confirmation", getConfirmations)
 
 	userRoutes := server.Group("/user")
 	userRoutes.POST("/create", createUser)

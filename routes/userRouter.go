@@ -81,11 +81,11 @@ func registerUser(ctx *gin.Context) {
 
 	// userIdParsed, err := strconv.ParseInt(userId, 10, 64)
 
-	if err != nil {
-		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
+	// if err != nil {
+	// 	errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Request body is invalid. Could not parse data")
 
-		return
-	}
+	// 	return
+	// }
 
 	// credentials := dto.UserCredentialsDTO{
 	// 	User_ID:  userIdParsed,
@@ -94,6 +94,20 @@ func registerUser(ctx *gin.Context) {
 	// }
 
 	//Admin signal for approval
+	// ok, err := services.CheckDoesRegistrationExists(&credentials)
+
+	// if err != nil {
+	// 	errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while interacting with database")
+
+	// 	return
+	// }
+
+	// if ok {
+	// 	errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "Registration for this user already exists")
+
+	// 	return
+	// }
+
 	go services.ConfirmCreationByAdmin(&credentials, ctx)
 
 	// err = services.RegisterUserToDatabase(&credentials)
@@ -162,4 +176,17 @@ func getUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func getConfirmations(ctx *gin.Context) {
+	users, err := services.GetAllUsersFromDataBase()
+
+	if err != nil {
+		fmt.Println(err.Error())
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not get user from database.")
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, users)
 }
