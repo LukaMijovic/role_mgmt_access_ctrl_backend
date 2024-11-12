@@ -28,7 +28,7 @@ func (ur *UserRepository) GetUserIDFromDataBase(u *dto.UserCredentialsDTO) (bool
 	var res string
 	err := row.Scan(&res)
 
-	fmt.Println(res)
+	//fmt.Println(res)
 
 	if err != nil {
 		return false, err

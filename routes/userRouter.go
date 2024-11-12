@@ -169,13 +169,43 @@ func getUser(ctx *gin.Context) {
 	user, err := services.GetUserFromDataBase(userId)
 
 	if err != nil {
-		fmt.Println(err.Error())
 		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not get user from database.")
 
 		return
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func updateUser(ctx *gin.Context) {
+	userId, err := strconv.ParseInt(ctx.Param("id"), 10, 64)
+
+	if err != nil {
+		errorhandler.BadRequestError(ctx.JSON, http.StatusBadRequest, "Invalid user")
+
+		return
+	}
+
+	var roleId int64
+	err = ctx.ShouldBindJSON(&roleId)
+
+	if err != nil {
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Invalid body request")
+
+		return
+	}
+
+	_, err = services.SetRoleToUser(userId, roleId)
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not update role to a user")
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Updated user successfully",
+	})
 }
 
 func getConfirmations(ctx *gin.Context) {

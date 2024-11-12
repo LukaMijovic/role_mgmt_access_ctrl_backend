@@ -17,7 +17,7 @@ func main() {
 	config.AllowHeaders = []string{"Origin", "X-Custom-Header", "Content-Type", "Authorization"}
 	config.AllowCredentials = true
 	config.AllowAllOrigins = true
-	config.AllowMethods = []string{"GET", "POST"}
+	config.AllowMethods = []string{"GET", "POST", "PATCH"}
 	config.AllowWebSockets = true
 	//corsHandler := cors.Default()
 	router.Use(cors.New(config))

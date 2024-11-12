@@ -104,3 +104,14 @@ func CheckDoesRegistrationExists(userCrednetials *dto.UserCredentialsDTO) (bool,
 
 	return ok, nil
 }
+
+func SetRoleToUser(userid, roleId int64) (bool, error) {
+	userRepository := repository.NewUserRepository()
+	err := userRepository.SetRoleIdOfUser(userid, roleId)
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
