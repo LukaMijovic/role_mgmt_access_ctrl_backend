@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -184,7 +183,7 @@ func (ur *UserRepository) Read(userId int64) (*model.User, error) {
 		return nil, err
 	}
 
-	fmt.Println(userRegistrationDate)
+	//fmt.Println(userRegistrationDate)
 
 	// user := model.User{
 	// 	Firstname: firstname,

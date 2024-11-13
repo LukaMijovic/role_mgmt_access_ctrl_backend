@@ -9,7 +9,6 @@ import (
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model/dto"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 )
 
 func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
@@ -44,32 +43,32 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 		return err
 	}
 
-	var res dto.UserRoleDTO
-	err = util.WebAppConnection.ReadJSON(&res)
+	// var res dto.UserRoleDTO
+	// err = util.WebAppConnection.ReadJSON(&res)
 	//mt, data, err := util.WebAppConnection.ReadMessage()
 
-	if err != nil {
-		//fmt.Printf("Error: %v\n", err.Error())
+	// if err != nil {
+	// 	//fmt.Printf("Error: %v\n", err.Error())
 
-		return err
-	}
+	// 	return err
+	// }
 
-	//fmt.Printf("User_id: %v, role_id: %v\n", res.User_id, res.Role_id)
+	// fmt.Printf("User_id: %v, role_id: %v\n", res.User_id, res.Role_id)
 
-	ur := repository.NewUserRepository()
-	err = ur.SetRoleIdOfUser(res.User_id, res.Role_id)
+	// ur := repository.NewUserRepository()
+	// err = ur.SetRoleIdOfUser(res.User_id, res.Role_id)
 
-	if err != nil {
-		//fmt.Printf("Error: %v\n", err.Error())
+	// if err != nil {
+	// 	fmt.Printf("Error: %v\n", err.Error())
 
-		return err
-	}
+	// 	return err
+	// }
 
 	//err = ur.SaveUserCredentials(u)
 	err = RegisterUserToDatabase(u)
 
 	if err != nil {
-		//fmt.Printf("Error: %v\n", err.Error())
+		fmt.Printf("Error: %v\n", err.Error())
 
 		return err
 	}
@@ -80,7 +79,7 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 	//msg = fmt.Sprintf("User %v has been created with role %v.", uint8(res.User_id), uint8(res.Role_id))
 	//conn.WriteMessage(websocket.TextMessage, []byte(data))
 
-	err = util.MobileAppConnection.WriteJSON(&u)
+	err = util.MobileAppConnection.WriteJSON(&dto.UserCredentialConfirmationDTO{Email: u.Email, UserId: u.User_ID})
 
 	if err != nil {
 		//fmt.Printf("Error: %v\n", err.Error())
@@ -88,13 +87,13 @@ func ConfirmCreationByAdmin(u *dto.UserCredentialsDTO, ctx *gin.Context) error {
 		return err
 	}
 
-	err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte("Successful"))
+	// err = util.WebAppConnection.WriteMessage(websocket.TextMessage, []byte("Successful"))
 
-	if err != nil {
-		//fmt.Printf("Error: %v\n", err.Error())
+	// if err != nil {
+	// 	//fmt.Printf("Error: %v\n", err.Error())
 
-		return err
-	}
+	// 	return err
+	// }
 
 	return nil
 }
