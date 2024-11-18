@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"net/http"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
@@ -23,7 +22,7 @@ func registerDevice(ctx *gin.Context) {
 	device, err := services.SaveDeviceToDatabase(&deviceDTO)
 
 	if err != nil {
-		fmt.Println(err.Error())
+		//fmt.Println(err.Error())
 		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Error while saving object to database")
 
 		return
@@ -33,4 +32,16 @@ func registerDevice(ctx *gin.Context) {
 		"deviceID":         device.GetID(),
 		"registrationTime": device.GetDeviceRegistraionDate(),
 	})
+}
+
+func getAllDevices(ctx *gin.Context) {
+	devices, err := services.GetAllDevicesOfUsers()
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, err.Error())
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, devices)
 }

@@ -3,18 +3,27 @@ package model
 import "time"
 
 type Device struct {
-	deviceID              int64
+	DeviceID              int64
 	IMEI                  string `binding:"required"`
 	deviceRegistraionDate time.Time
 	UserID                int64 `binding:"required"`
 }
 
+func NewDevice(deviceId int64, IMEI string, deviceRegistraionDate time.Time, userId int64) *Device {
+	return &Device{
+		DeviceID:              deviceId,
+		IMEI:                  IMEI,
+		deviceRegistraionDate: deviceRegistraionDate,
+		UserID:                userId,
+	}
+}
+
 func (d *Device) GetID() int64 {
-	return d.deviceID
+	return d.DeviceID
 }
 
 func (d *Device) SetID(deviceID int64) {
-	d.deviceID = deviceID
+	d.DeviceID = deviceID
 }
 
 func (d *Device) GetDeviceRegistraionDate() time.Time {

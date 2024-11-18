@@ -7,6 +7,17 @@ import (
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
 )
 
+func GetAllDevicesOfUsers() ([]model.Device, error) {
+	deviceRepository := repository.NewDeviceRepository()
+	devices, err := deviceRepository.ReadAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return devices, nil
+}
+
 func CheckDeviceIMEIofUser(IMEI string, userId int64) (int64, bool, error) {
 	deviceRepository := repository.NewDeviceRepository()
 	IMEIList, err := deviceRepository.GetDeviceIMEIOfUser(userId)

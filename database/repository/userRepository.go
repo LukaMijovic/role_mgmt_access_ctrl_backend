@@ -130,8 +130,14 @@ func (ur *UserRepository) Save(u *model.User) (int64, error) {
 	return userID, nil
 }
 
-func (ur *UserRepository) ReadAll() (*[]model.User, error) {
+func (ur *UserRepository) ReadAll(withRole bool) (*[]model.User, error) {
 	query := `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User" WHERE role_id IS null`
+	//query := `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User"`
+
+	if withRole {
+		query = `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User"`
+	}
+
 	rows, err := ur.db.Query(query)
 
 	if err != nil {

@@ -14,6 +14,8 @@ func RegisterRoutes(server *gin.Engine) {
 	adminRoutes.PATCH("/user/:id", updateUser)
 	adminRoutes.GET("/user/confirmation", getConfirmations)
 	adminRoutes.GET("/roles", getAllRoles)
+	adminRoutes.GET("/devices", getAllDevices)
+	adminRoutes.POST("/device/users", getAllUsersWithDevice)
 
 	userRoutes := server.Group("/user")
 	userRoutes.POST("/create", createUser)

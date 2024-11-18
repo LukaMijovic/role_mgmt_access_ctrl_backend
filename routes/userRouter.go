@@ -209,7 +209,7 @@ func updateUser(ctx *gin.Context) {
 }
 
 func getConfirmations(ctx *gin.Context) {
-	users, err := services.GetAllUsersFromDataBase()
+	users, err := services.GetAllUsersFromDataBase(false)
 
 	if err != nil {
 		fmt.Println(err.Error())
@@ -219,4 +219,39 @@ func getConfirmations(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, users)
+}
+
+func getAllUsersWithDevice(ctx *gin.Context) {
+	var userIds []int64
+	err := ctx.ShouldBindJSON(&userIds)
+
+	if err != nil {
+		errorhandler.BadBodyRequestError(ctx.JSON, http.StatusBadRequest, "Could not get data from body")
+
+		return
+	}
+
+	// for i := 0; i < len(userIds); i++ {
+	// 	fmt.Printf("id: %v\n", userIds[i])
+	// }
+
+	users, err := services.GetAllUsersFromDataBase(true)
+
+	if err != nil {
+		errorhandler.DatabaseError(ctx.JSON, http.StatusInternalServerError, "Could not fetch users from database")
+
+		return
+	}
+
+	for i := 0; i < len(*users); i++ {
+		fmt.Printf("user: %v\n", (*users)[i])
+	}
+
+	users = services.GetAllUsersWithIDs(userIds, users)
+
+	// for i := 0; i < len(*users); i++ {
+	// 	fmt.Printf("user: %v\n", (*users)[i])
+	// }
+
+	ctx.JSON(http.StatusOK, *users)
 }

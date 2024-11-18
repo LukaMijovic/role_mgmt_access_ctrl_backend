@@ -82,9 +82,9 @@ func GetUserFromDataBase(userId int64) (*model.User, error) {
 	return user, nil
 }
 
-func GetAllUsersFromDataBase() (*[]model.User, error) {
+func GetAllUsersFromDataBase(withRole bool) (*[]model.User, error) {
 	userRepository := repository.NewUserRepository()
-	users, err := userRepository.ReadAll()
+	users, err := userRepository.ReadAll(withRole)
 
 	if err != nil {
 		return nil, err
@@ -114,4 +114,24 @@ func SetRoleToUser(userid, roleId int64) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GetAllUsersWithIDs(ids []int64, users *[]model.User) *[]model.User {
+	var resUsers []model.User
+
+	//fmt.Printf("len: %v\n", len(*users))
+	for i := 0; i < len(ids); i++ {
+		for j := 0; j < len(*users); j++ {
+			// fmt.Printf("user id: %v\n", (*users)[j].GetID())
+			// fmt.Printf("id: %v\n", ids[i])
+			// fmt.Println(ids[i] == (*users)[j].GetID())
+			if ids[i] == (*users)[j].GetID() {
+				resUsers = append(resUsers, (*users)[j])
+
+				break
+			}
+		}
+	}
+
+	return &resUsers
 }
