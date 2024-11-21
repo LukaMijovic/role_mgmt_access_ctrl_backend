@@ -15,12 +15,16 @@ func CheckAccessRightOfUser(userId int64, id int64) (bool, error) {
 		return false, err
 	}
 
+	//fmt.Printf("AccessRightService:\n RoleId: %v\n", roleId)
+
 	accessRightRepository := repository.NewAccessRightRepository()
 	accessId, err := accessRightRepository.GetAccessRightIdFromRole(roleId)
 
 	if err != nil {
 		return false, err
 	}
+
+	//fmt.Printf("AccessRightService:\n AccessId: %v\n", accessId)
 
 	if accessId != id {
 		tempList, err := accessRightRepository.GetTempAccessRightOfUser(userId)
@@ -45,7 +49,7 @@ func CheckAccessRightOfUser(userId int64, id int64) (bool, error) {
 
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func GiveTempAccessRightToUser(tempAccess *model.TempAccessRight) error {

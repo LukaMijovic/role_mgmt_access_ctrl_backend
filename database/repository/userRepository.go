@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"strconv"
+	"time"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -19,24 +20,26 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (ur *UserRepository) GetUserIDFromDataBase(u *dto.UserCredentialsDTO) error {
+func (ur *UserRepository) GetUserIDFromDataBase(u *dto.UserCredentialsDTO) (bool, error) {
 	query := `SELECT user_id FROM public."User" WHERE email = $1`
 	row := ur.db.QueryRow(query, u.Email)
 
 	var res string
 	err := row.Scan(&res)
 
+	//fmt.Println(res)
+
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	u.User_ID, err = strconv.ParseInt(res, 10, 64)
 
 	if err != nil {
-		return err
+		return false, err
 	}
 
-	return nil
+	return true, nil
 }
 
 func (ur *UserRepository) GetUserCredentials(u *dto.UserCredentialsDTO) (*dto.UserCredentialsDTO, error) {
@@ -77,6 +80,21 @@ func (ur *UserRepository) SaveUserCredentials(u *dto.UserCredentialsDTO) error {
 	return nil
 }
 
+func (ur *UserRepository) SetRoleIdOfUser(userId, roleId int64) error {
+	query := `UPDATE public."User" SET role_id = $1 WHERE user_id = $2`
+	stmt, err := ur.db.Prepare(query)
+
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	stmt.QueryRow(roleId, userId)
+
+	return nil
+}
+
 func (ur *UserRepository) GetRoleIdOfUser(userId int64) (int64, error) {
 	query := `SELECT role_id FROM public."User" WHERE user_id = $1`
 	row := ur.db.QueryRow(query, userId)
@@ -110,4 +128,79 @@ func (ur *UserRepository) Save(u *model.User) (int64, error) {
 	}
 
 	return userID, nil
+}
+
+func (ur *UserRepository) ReadAll(withRole bool) (*[]model.User, error) {
+	query := `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User" WHERE role_id IS null`
+	//query := `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User"`
+
+	if withRole {
+		query = `SELECT user_id, firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User"`
+	}
+
+	rows, err := ur.db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var users []model.User
+
+	for rows.Next() {
+		var userId int64
+		var firstname, lastname, email, telephone string
+		var birthdate, userRegistrationDate time.Time
+
+		rows.Scan(&userId, &firstname, &lastname, &email, &telephone, &birthdate, &userRegistrationDate)
+
+		// user := model.User{
+		// 	Firstname: firstname,
+		// 	Lastname:  lastname,
+		// 	Email:     email,
+		// 	Telephone: telephone,
+		// 	Birthdate: birthdate,
+		// }
+
+		user := model.NewUser(firstname, lastname, email, telephone, birthdate, userRegistrationDate)
+		user.SetID(userId)
+
+		users = append(users, *user)
+	}
+
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	return &users, nil
+}
+
+func (ur *UserRepository) Read(userId int64) (*model.User, error) {
+	query := `SELECT firstname, lastname, email, telephone, birthdate, user_registration_date FROM public."User" WHERE user_id = $1`
+	row := ur.db.QueryRow(query, userId)
+
+	var firstname, lastname, email, telephone string
+	var birthdate, userRegistrationDate time.Time
+
+	err := row.Scan(&firstname, &lastname, &email, &telephone, &birthdate, &userRegistrationDate)
+
+	if err != nil {
+		return nil, err
+	}
+
+	//fmt.Println(userRegistrationDate)
+
+	// user := model.User{
+	// 	Firstname: firstname,
+	// 	Lastname:  lastname,
+	// 	Email:     email,
+	// 	Telephone: telephone,
+	// 	Birthdate: birthdate,
+	// }
+
+	user := model.NewUser(firstname, lastname, email, telephone, birthdate, userRegistrationDate)
+	user.SetID(userId)
+
+	return user, nil
 }

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"fmt"
 	"net/http"
 
 	errorhandler "github.com/LukaMijovic/role-mgmt-access-ctrl/errorHandler"
@@ -8,7 +9,38 @@ import (
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/services"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 )
+
+func connectToWS(ctx *gin.Context) {
+	wsHandler := &util.WebSocketHandler{
+		Upgrader: &websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+		},
+	}
+
+	conn, err := wsHandler.Connect(ctx)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		errorhandler.WebSocketConnectionError(ctx.JSON, http.StatusNotAcceptable, "Error while establishing Web Socket connection to the server.")
+
+		return
+	}
+
+	util.WebAppConnection = conn
+
+	//Channel communication with Frontend Web application
+
+	// for i := 0; i <= 10; i++ {
+	// 	msg := "hello, WebSocket! " + fmt.Sprint(uint8(i))
+	// 	conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	// 	time.Sleep(time.Second)
+	// }
+
+	//defer wsHandler.Disconnect(conn)
+}
 
 func loginAdmin(ctx *gin.Context) {
 	var credentials dto.AdminCredentialsDTO

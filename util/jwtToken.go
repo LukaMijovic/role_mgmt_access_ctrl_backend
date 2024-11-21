@@ -55,6 +55,7 @@ func VerifyToken(token string) (interface{}, error) {
 	})
 
 	if err != nil {
+		//fmt.Println(err.Error())
 		return -1, errors.New("Could not parse token")
 	}
 

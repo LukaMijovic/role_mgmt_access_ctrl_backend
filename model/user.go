@@ -3,40 +3,41 @@ package model
 import "time"
 
 type User struct {
-	userID              int64
-	Firstname           string    `binding:"required"`
-	Lastname            string    `binding:"required"`
-	Email               string    `binding:"required"`
-	Telephone           string    `binding:"required"`
-	Birthdate           time.Time `binding:"required"`
-	userRegistraionDate time.Time
-	roleID              int64
+	UserID               int64
+	Firstname            string    `binding:"required"`
+	Lastname             string    `binding:"required"`
+	Email                string    `binding:"required"`
+	Telephone            string    `binding:"required"`
+	Birthdate            time.Time `binding:"required"`
+	UserRegistrationDate time.Time
+	roleID               int64
 }
 
-// func NewUser(firstname string, lastname string, email string, telephone string, birthdate time.Time) *User {
-// 	return &User{
-// 		Firstname: firstname,
-// 		Lastname:  lastname,
-// 		Email:     email,
-// 		Telephone: telephone,
-// 		Birthdate: birthdate,
-// 	}
-// }
+func NewUser(firstname string, lastname string, email string, telephone string, birthdate time.Time, registrationDate time.Time) *User {
+	return &User{
+		Firstname:            firstname,
+		Lastname:             lastname,
+		Email:                email,
+		Telephone:            telephone,
+		Birthdate:            birthdate,
+		UserRegistrationDate: registrationDate,
+	}
+}
 
 func (u *User) GetID() int64 {
-	return u.userID
+	return u.UserID
 }
 
 func (u *User) SetID(userID int64) {
-	u.userID = userID
+	u.UserID = userID
 }
 
 func (u *User) GetUserRegistrationDate() time.Time {
-	return u.userRegistraionDate
+	return u.UserRegistrationDate
 }
 
 func (u *User) SetUserRegistraionDate() {
-	u.userRegistraionDate = time.Now()
+	u.UserRegistrationDate = time.Now()
 }
 
 func (u *User) GetRoleID() int64 {

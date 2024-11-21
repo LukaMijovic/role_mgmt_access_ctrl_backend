@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/database"
 	"github.com/LukaMijovic/role-mgmt-access-ctrl/model"
@@ -36,6 +37,38 @@ func (dr *DeviceRepository) Save(d *model.Device) (int64, error) {
 	}
 
 	return deviceID, nil
+}
+
+func (dr *DeviceRepository) ReadAll() ([]model.Device, error) {
+	query := `SELECT * FROM public."Device"`
+
+	rows, err := dr.db.Query(query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var devices []model.Device
+
+	for rows.Next() {
+		var deviceId, userId int64
+		var IMEI string
+		var deviceRegistraionDate time.Time
+
+		err = rows.Scan(&deviceId, &IMEI, &deviceRegistraionDate, &userId)
+
+		if err != nil {
+			return devices, err
+		}
+
+		device := model.NewDevice(deviceId, IMEI, deviceRegistraionDate, userId)
+
+		devices = append(devices, *device)
+	}
+
+	return devices, nil
 }
 
 func (dr *DeviceRepository) GetDeviceIdFromIMEI(IMEI string) (int64, error) {
